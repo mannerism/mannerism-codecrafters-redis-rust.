@@ -16,8 +16,14 @@ fn main() {
         match stream {
             Ok(mut stream) => {
                 let mut buf = [0; 512];
-                stream.read(&mut buf).unwrap();
-                stream.write("+PONG\r\n".as_bytes()).unwrap();
+                loop {
+                    let byes_read = stream.read(&mut buf).unwrap();
+                    if byes_read == 0 {
+                        println!("client closed the connection");
+                        break;
+                    }
+                    stream.write("+PONG\r\n".as_bytes()).unwrap();
+                }
             }
             Err(e) => {
                 println!("error: {}", e);
